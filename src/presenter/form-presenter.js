@@ -9,17 +9,20 @@ export default class FormPresenter {
 
   formComponent = new FormView();
 
-  init = (formContainer) => {
+  init = (formContainer, pointsModel, destinationModel) => {
     this.formContainer = formContainer;
-
+    this.pointsModel = pointsModel;
+    this.destinationModel = destinationModel;
+    this.formPoints = [...this.pointsModel.getPoints()];
+    this.formDestinations = [...this.destinationModel.getDestinations()];
     render(this.formComponent, this.formContainer);
     render(new SortView(), this.formComponent.getElement());
-    render(new EditForm(), this.formComponent.getElement());
-    render(new CreateForm(), this.formComponent.getElement());
+    render(new EditForm(this.formPoints[0]), this.formComponent.getElement());
+    render(new CreateForm(this.formPoints[1]), this.formComponent.getElement());
 
 
-    for(let i = 0; i < 3; i++) {
-      render(new Waypoint(), this.formComponent.getElement());
+    for(let i = 2; i < this.formPoints.length; i++) {
+      render(new Waypoint(this.formPoints[i]), this.formComponent.getElement());
     }
   };
 }
