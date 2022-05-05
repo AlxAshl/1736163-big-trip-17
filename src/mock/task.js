@@ -1,16 +1,16 @@
 import {getRandomInteger} from '../utils.js';
 
-const TYPES = {
-  [1]:'taxi',
-  [2]:'bus',
-  [3]:'train',
-  [4]:'ship',
-  [5]: 'drive',
-  [6]: 'Flight',
-  [7]: 'Check-in',
-  [8]: 'Sightseeing',
-  [9]: 'Restaurant'
-};
+const TYPES = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'Flight',
+  'Check-in',
+  'Sightseeing',
+  'Restaurant'
+];
 
 const CITIES = [
   'Amsterdam',
@@ -30,8 +30,8 @@ const DESCRIPTIONS = [
   'Aliquam erat volutpat.'
 ];
 
-const OFFERS = {
-  [1]: {
+const OFFERS = [
+  {
     offers: [
       {
         id: 1,
@@ -44,7 +44,7 @@ const OFFERS = {
       }
     ]
   },
-  [2]: {
+  {
     offers: [
       {
         id: 1,
@@ -57,7 +57,7 @@ const OFFERS = {
       }
     ]
   },
-  [3]: {
+  {
     offers: [
       {
         id: 1,
@@ -75,7 +75,7 @@ const OFFERS = {
       }
     ]
   },
-  [4]: {
+  {
     offers: [
       {
         id: 1,
@@ -93,10 +93,10 @@ const OFFERS = {
       }
     ]
   },
-};
+];
 
 const getValue = (value) => value[getRandomInteger(0,value.length -1)];
-const getType = () => getRandomInteger(1, 4);
+const getType = () => getRandomInteger(0, 3);
 const getBool = () => getRandomInteger(0, 1);
 
 export const generateDestination = () => ({
