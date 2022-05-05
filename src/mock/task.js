@@ -32,6 +32,7 @@ const DESCRIPTIONS = [
 
 const OFFERS = [
   {
+    type: 'taxi',
     offers: [
       {
         id: 1,
@@ -45,6 +46,7 @@ const OFFERS = [
     ]
   },
   {
+    type: 'bus',
     offers: [
       {
         id: 1,
@@ -52,12 +54,23 @@ const OFFERS = [
         price: 120
       }, {
         id: 2,
-        title: 'Get a snack',
+        title: 'Choose the radio station',
         price: 60
       }
     ]
   },
   {
+    type: 'train',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      }
+    ]
+  },
+  {
+    type: 'ship',
     offers: [
       {
         id: 1,
@@ -65,17 +78,27 @@ const OFFERS = [
         price: 120
       }, {
         id: 2,
-        title: 'Add a meal',
-        price: 60
-      },
-      {
-        id: 3,
-        title: 'Extra luggage',
+        title: 'Guide',
         price: 60
       }
     ]
   },
   {
+    type: 'drive',
+    offers: [
+      {
+        id: 1,
+        title: 'Better car',
+        price: 120
+      }, {
+        id: 2,
+        title: 'Choose the radio station',
+        price: 60
+      }
+    ]
+  },
+  {
+    type: 'Flight',
     offers: [
       {
         id: 1,
@@ -83,20 +106,45 @@ const OFFERS = [
         price: 120
       }, {
         id: 2,
-        title: 'Extra luggage',
+        title: 'Add meal',
         price: 60
-      },
+      }
+    ]
+  },
+  {
+    type: 'Check-in',
+    offers: [
       {
-        id: 3,
-        title: 'Pet pen',
-        price: 60
+        id: 1,
+        title: 'Luggage transportation',
+        price: 120
+      }
+    ]
+  },
+  {
+    type: 'Sightseeing',
+    offers: [
+      {
+        id: 1,
+        title: 'Taxi pickup',
+        price: 120
+      }
+    ]
+  },
+  {
+    type: 'Restaurant',
+    offers: [
+      {
+        id: 1,
+        title: 'Better view',
+        price: 20
       }
     ]
   },
 ];
 
 const getValue = (value) => value[getRandomInteger(0,value.length -1)];
-const getType = () => getRandomInteger(0, 3);
+const getType = () => getRandomInteger(0, 8);
 const getBool = () => getRandomInteger(0, 1);
 
 export const generateDestination = () => ({
@@ -122,3 +170,6 @@ export const generatePoint = () => ({
   offers: OFFERS[getType()]
 });
 
+// console.log(generatePoint())
+let snip = generatePoint()
+console.log(snip)

@@ -25,9 +25,9 @@ const createWaypoint = (task) => {
 
   const createOfferTemplate = () =>(
     `<li class="event__offer">
-    <span class="event__offer-title">${offers.offers[1].title}</span>
+    <span class="event__offer-title">${offers.offers[0].title}</span>
     &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offers.offers[1].price}</span>
+    <span class="event__offer-price">${offers.offers[0].price}</span>
   </li>`
   );
 
