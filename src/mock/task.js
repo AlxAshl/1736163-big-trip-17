@@ -169,7 +169,3 @@ export const generatePoint = () => ({
   type: TYPES[getType()],
   offers: OFFERS[getType()]
 });
-
-// console.log(generatePoint())
-let snip = generatePoint()
-console.log(snip)
