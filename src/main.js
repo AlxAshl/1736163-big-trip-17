@@ -8,7 +8,6 @@ const siteTripEventsSectionElement = document.querySelector('.trip-events');
 const formPresenter = new FormPresenter;
 const pointsModel = new PointModel;
 const destinationModel = new DestinationModel;
-
 render(new FilterView(), siteTripControlsElement);
 
 formPresenter.init(siteTripEventsSectionElement, pointsModel, destinationModel);

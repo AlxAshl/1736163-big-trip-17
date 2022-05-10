@@ -2,8 +2,21 @@ import {createElement} from '../render.js';
 import {humanizeEventDate, humanizeEventTime} from '../utils.js';
 import dayjs from 'dayjs';
 
-const createWaypoint = (task) => {
-  const {basePrice, dateFrom, dateTo, destination, isFavorite, type, offers} = task;
+const createWaypoint = (point, offers) => {
+
+  const {basePrice, destination, dateFrom, dateTo, type, isFavorite} = point;
+  const pointTypeOffer = offers
+    .find((offer) => offer.type === point.type);
+
+  const createOffers = () =>
+    pointTypeOffer.offers.map((offer) => (
+      `<li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </li>`
+    )
+    ).join('<br>');
 
   const date = dateFrom !== null
     ? humanizeEventDate(dateFrom)
@@ -22,14 +35,6 @@ const createWaypoint = (task) => {
   let minutes = date2.diff(date1, 'minutes');
   const hours = Math.floor(minutes/60);
   minutes = minutes - (hours * 60);
-
-  const createOfferTemplate = () =>(
-    `<li class="event__offer">
-    <span class="event__offer-title">${offers.offers[0].title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offers.offers[0].price}</span>
-  </li>`
-  );
 
   return (
     `<li class = "trip-events__item">
@@ -52,7 +57,7 @@ const createWaypoint = (task) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createOfferTemplate()}
+          ${createOffers()}
         </ul>
         <button class="event__favorite-btn event__favorite-btn${addFavourite}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -69,23 +74,28 @@ const createWaypoint = (task) => {
 };
 
 export default class Waypoint {
-  constructor(point) {
-    this.point = point;
+  #element = null;
+  #point = null;
+  #offer = null;
+
+  constructor(point, offer) {
+    this.#point = point;
+
+    this.#offer = offer;
   }
 
-  getTemplate() {
-    return createWaypoint(this.point);
+  get template() {
+    return createWaypoint(this.#point, this.#offer);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

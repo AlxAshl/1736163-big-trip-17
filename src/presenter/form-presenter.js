@@ -1,5 +1,4 @@
 import SortView from '../view/sort-view.js';
-import CreateForm from '../view/create-point-view.js';
 import EditForm from '../view/edit-point-view.js';
 import Waypoint from '../view/point-view.js';
 import FormView from '../view/form-view.js';
@@ -7,22 +6,63 @@ import {render} from '../render.js';
 
 export default class FormPresenter {
 
-  formComponent = new FormView();
+  #formComponent = new FormView();
+  #formContainer = null;
+  #pointsModel = null;
+  #formPoints = [];
+  #formOffers = [];
 
-  init = (formContainer, pointsModel, destinationModel) => {
-    this.formContainer = formContainer;
-    this.pointsModel = pointsModel;
-    this.destinationModel = destinationModel;
-    this.formPoints = [...this.pointsModel.getPoints()];
-    this.formDestinations = [...this.destinationModel.getDestinations()];
-    render(this.formComponent, this.formContainer);
-    render(new SortView(), this.formComponent.getElement());
-    render(new EditForm(this.formPoints[0]), this.formComponent.getElement());
-    render(new CreateForm(this.formPoints[1]), this.formComponent.getElement());
+  #renderPoint = (point, offer) => {
+    const pointComponent = new Waypoint(point, offer);
+    const pointEditForm = new EditForm (point, offer);
 
+    const replacePointToForm = () => {
+      this.#formComponent.element.replaceChild(pointEditForm.element, pointComponent.element);
+    };
 
-    for(let i = 2; i < this.formPoints.length; i++) {
-      render(new Waypoint(this.formPoints[i]), this.formComponent.getElement());
+    const replaceFormToPoint = () => {
+      this.#formComponent.element.replaceChild(pointComponent.element, pointEditForm.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    pointEditForm.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    pointEditForm.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToPoint();
+    });
+
+    render(pointComponent, this.#formComponent.element);
+  };
+
+  init = (formContainer, pointsModel) => {
+
+    this.#formContainer = formContainer;
+    this.#pointsModel = pointsModel;
+
+    this.#formPoints = [...this.#pointsModel.points];
+    this.#formOffers = [...this.#pointsModel.offers];
+
+    render(this.#formComponent, this.#formContainer);
+    render(new SortView(), this.#formComponent.element);
+
+    for(let i = 0; i < this.#formPoints.length; i++) {
+      this.#renderPoint(this.#formPoints[i], this.#formOffers);
     }
   };
 }
