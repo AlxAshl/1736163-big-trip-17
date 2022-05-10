@@ -9,7 +9,6 @@ const createFormCreationTemplate = (point = {}, offersArr) => {
     dateFrom = null,
     dateTo = null,
     type = '',
-    offers = '',
   } = point;
 
   const pointTypeOffer = offersArr
