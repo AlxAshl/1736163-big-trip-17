@@ -30,7 +30,7 @@ const DESCRIPTIONS = [
   'Aliquam erat volutpat.'
 ];
 
-const OFFERS = [
+export const OFFERS = [
   {
     type: 'taxi',
     offers: [
@@ -166,6 +166,6 @@ export const generatePoint = () => ({
   destination: generateDestination(),
   id: 0,
   isFavorite: getBool(),
+  offers: [1, 2],
   type: TYPES[getType()],
-  offers: OFFERS[getType()]
 });

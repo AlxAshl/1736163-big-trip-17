@@ -1,7 +1,7 @@
 import {createElement} from '../render.js';
 import {humanizeDate} from '../utils.js';
 
-const createFormCreationTemplate = (point = {}) => {
+const createFormCreationTemplate = (point = {}, offersArr) => {
 
   const {
     basePrice= '',
@@ -9,20 +9,23 @@ const createFormCreationTemplate = (point = {}) => {
     dateFrom = null,
     dateTo = null,
     type = '',
-    offers = '',
   } = point;
 
-  const createOfferButtonTemplate = () =>(
-    `<div class="event__available-offers">
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${offers.offers[0].title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offers.offers[0].price}</span>
-      </label>
-    </div>`
-  );
+  const pointTypeOffer = offersArr
+    .find((offer) => offer.type === point.type);
+
+  const createOffers = () =>
+    pointTypeOffer.offers.map((offer) => (
+      `<div class="event__available-offers">
+        <div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-luggage" checked>
+          <label class="event__offer-label" for="${offer.title}-${offer.id}">
+            <span class="event__offer-title">${offer.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
+          </label>
+        </div>`)
+    ).join('<br>');
 
   const startTime = dateFrom !== null
     ? humanizeDate(dateFrom)
@@ -128,7 +131,7 @@ const createFormCreationTemplate = (point = {}) => {
     <section class="event__details">
       <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        ${createOfferButtonTemplate()}
+        ${createOffers()}
 
       </section>
 
@@ -153,23 +156,28 @@ const createFormCreationTemplate = (point = {}) => {
 };
 
 export default class CreateForm {
-  constructor(createForm) {
-    this.createForm = createForm;
+  #element = null;
+  #createForm = null;
+  #offer = null;
+
+  constructor(createForm, offer) {
+    this.#createForm = createForm;
+
+    this.#offer = offer;
   }
 
-  getTemplate() {
-    return createFormCreationTemplate(this.createForm);
+  get template() {
+    return createFormCreationTemplate(this.#createForm, this.#offer);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
