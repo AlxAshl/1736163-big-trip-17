@@ -4,18 +4,19 @@ import {humanizeDate} from '../utils.js';
 const createEditFormTemplate = (point, offers) => {
 
   const {basePrice, dateFrom, dateTo, type} = point;
+  // деструктурировать offers
   const pointTypeOffer = offers
     .find((offer) => offer.type === point.type);
 
   const createOffers = () =>
-    pointTypeOffer.offers.map((offer) => (
+    pointTypeOffer.offers.map((some) => (
       `<div class="event__available-offers">
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="event-offer-luggage" checked>
-          <label class="event__offer-label" for="${offer.title}-${offer.id}">
-            <span class="event__offer-title">${offer.title}</span>
+          <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="event-offer-luggage" checked>
+          <label class="event__offer-label" for="${some.title}-${some.id}">
+            <span class="event__offer-title">${some.title}</span>
             &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
+            <span class="event__offer-price">${some.price}</span>
           </label>
         </div>`)
     ).join('<br>');
