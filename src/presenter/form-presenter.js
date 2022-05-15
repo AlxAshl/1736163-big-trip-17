@@ -2,7 +2,7 @@ import SortView from '../view/sort-view.js';
 import EditForm from '../view/edit-point-view.js';
 import Waypoint from '../view/point-view.js';
 import FormView from '../view/form-view.js';
-import {render} from '../render.js';
+import {render, replace} from '../framework/render.js';
 
 export default class FormPresenter {
 
@@ -17,11 +17,11 @@ export default class FormPresenter {
     const pointEditForm = new EditForm (point, offer);
 
     const replacePointToForm = () => {
-      this.#formComponent.element.replaceChild(pointEditForm.element, pointComponent.element);
+      replace(pointEditForm, pointComponent);
     };
 
     const replaceFormToPoint = () => {
-      this.#formComponent.element.replaceChild(pointComponent.element, pointEditForm.element);
+      replace(pointComponent, pointEditForm);
     };
 
     const onEscKeyDown = (evt) => {
@@ -32,18 +32,17 @@ export default class FormPresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setRollupClickHandler(() => {
       replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditForm.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditForm.setSubmitClickHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditForm.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointEditForm.setRollupClickHandler(() => {
       replaceFormToPoint();
     });
 
