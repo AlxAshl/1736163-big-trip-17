@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
-import {humanizeEventDate, humanizeEventTime} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
 
 const createWaypoint = (point, offers) => {
@@ -18,15 +18,9 @@ const createWaypoint = (point, offers) => {
     )
     ).join('<br>');
 
-  const date = dateFrom !== null
-    ? humanizeEventDate(dateFrom)
-    : '';
-  const startTime = dateFrom !== null
-    ? humanizeEventTime(dateFrom)
-    : '';
-  const finishTime = dateTo !== null
-    ? humanizeEventTime(dateTo)
-    : '';
+  const date = humanizeEventDate(dateFrom);
+  const startTime = humanizeEventTime(dateFrom);
+  const finishTime = humanizeEventTime(dateTo);
   const addFavourite = isFavorite
     ? '--active'
     : '';
@@ -73,12 +67,14 @@ const createWaypoint = (point, offers) => {
   );
 };
 
-export default class Waypoint {
-  #element = null;
+export default class Waypoint extends AbstractView {
+
   #point = null;
   #offer = null;
 
   constructor(point, offer) {
+    super();
+
     this.#point = point;
 
     this.#offer = offer;
@@ -88,14 +84,13 @@ export default class Waypoint {
     return createWaypoint(this.#point, this.#offer);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
+  };
 }

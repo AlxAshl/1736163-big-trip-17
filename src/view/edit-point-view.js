@@ -1,9 +1,11 @@
-import {createElement} from '../render.js';
-import {humanizeDate} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeDate} from '../utils/point.js';
 
 const createEditFormTemplate = (point, offers) => {
 
   const {basePrice, dateFrom, dateTo, type} = point;
+  const startTime = humanizeDate(dateFrom);
+  const finishTime = humanizeDate(dateTo);
   // деструктурировать offers
   const pointTypeOffer = offers
     .find((offer) => offer.type === point.type);
@@ -20,13 +22,6 @@ const createEditFormTemplate = (point, offers) => {
           </label>
         </div>`)
     ).join('<br>');
-
-  const startTime = dateFrom !== null
-    ? humanizeDate(dateFrom)
-    : '';
-  const finishTime = dateTo !== null
-    ? humanizeDate(dateTo)
-    : '';
 
   return (
     `<li class="trip-events__item">
@@ -147,12 +142,14 @@ const createEditFormTemplate = (point, offers) => {
   );
 };
 
-export default class EditForm {
-  #element = null;
+export default class EditForm extends AbstractView {
+
   #editForm = null;
   #offer = null;
 
   constructor(editForm, offer) {
+    super();
+
     this.#editForm = editForm;
 
     this.#offer = offer;
@@ -162,15 +159,24 @@ export default class EditForm {
     return createEditFormTemplate(this.#editForm, this.#offer);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setSubmitClickHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
+
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
+  };
 }
 

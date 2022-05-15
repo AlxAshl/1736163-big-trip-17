@@ -1,5 +1,13 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate} from '../utils.js';
+
+const BLANK_FORM = {
+  basePrice: '',
+  destination: '',
+  dateFrom: null,
+  dateTo: null,
+  type: '',
+};
 
 const createFormCreationTemplate = (point = {}, offersArr) => {
 
@@ -155,12 +163,14 @@ const createFormCreationTemplate = (point = {}, offersArr) => {
   );
 };
 
-export default class CreateForm {
-  #element = null;
+export default class CreateForm extends AbstractView {
+
   #createForm = null;
   #offer = null;
 
-  constructor(createForm, offer) {
+  constructor(createForm = BLANK_FORM, offer) {
+    super();
+
     this.#createForm = createForm;
 
     this.#offer = offer;
@@ -168,16 +178,5 @@ export default class CreateForm {
 
   get template() {
     return createFormCreationTemplate(this.#createForm, this.#offer);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
