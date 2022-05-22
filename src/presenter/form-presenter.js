@@ -1,67 +1,70 @@
 import SortView from '../view/sort-view.js';
-import EditForm from '../view/edit-point-view.js';
-import Waypoint from '../view/point-view.js';
+import {updateItem} from '../utils/common.js';
 import FormView from '../view/form-view.js';
-import {render, replace} from '../framework/render.js';
+import {render, RenderPosition} from '../framework/render.js';
+import PointPresenter from './point-presenter';
+
 
 export default class FormPresenter {
 
   #formComponent = new FormView();
+  #sortComponent = new SortView();
+
   #formContainer = null;
   #pointsModel = null;
+
   #formPoints = [];
   #formOffers = [];
+  #pointPresenter = new Map();
 
   #renderPoint = (point, offer) => {
-    const pointComponent = new Waypoint(point, offer);
-    const pointEditForm = new EditForm (point, offer);
-
-    const replacePointToForm = () => {
-      replace(pointEditForm, pointComponent);
-    };
-
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditForm);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    pointComponent.setRollupClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditForm.setSubmitClickHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditForm.setRollupClickHandler(() => {
-      replaceFormToPoint();
-    });
-
-    render(pointComponent, this.#formComponent.element);
+    const pointPresenter = new PointPresenter(this.#formComponent.element, this.#handlePointChange, this.#handleModeChange);
+    pointPresenter.init(point, offer);
+    this.#pointPresenter.set(point.id, pointPresenter);
   };
 
-  init = (formContainer, pointsModel) => {
+  #handlePointChange = (updatedPoint, offer) => {
+    this.#formPoints = updateItem(this.#formPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, offer);
+  };
 
+  #renderSort = () => {
+    render(this.#sortComponent, this.#formComponent.element, RenderPosition.AFTERBEGIN);
+  };
+
+  constructor (formContainer, pointsModel) {
     this.#formContainer = formContainer;
     this.#pointsModel = pointsModel;
+  }
 
+  #clearPointList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  init = () => {
     this.#formPoints = [...this.#pointsModel.points];
     this.#formOffers = [...this.#pointsModel.offers];
+    this.#renderForm();
+  };
 
+  #renderPoints = (from, to) => {
+    this.#formPoints
+      .slice(from, to)
+      .forEach((point) => this.#renderPoint(point, this.#formOffers));
+  };
+
+  #renderPointList = () => {
+    this.#renderPoints(0, this.#formPoints.length);
+  };
+
+  #renderForm = () => {
     render(this.#formComponent, this.#formContainer);
-    render(new SortView(), this.#formComponent.element);
-
-    for(let i = 0; i < this.#formPoints.length; i++) {
-      this.#renderPoint(this.#formPoints[i], this.#formOffers);
-    }
+    this.#renderSort();
+    this.#renderPointList();
   };
 }

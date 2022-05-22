@@ -12,16 +12,15 @@ const createEditFormTemplate = (point, offers) => {
 
   const createOffers = () =>
     pointTypeOffer.offers.map((some) => (
-      `<div class="event__available-offers">
-        <div class="event__offer-selector">
+      `<div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="event-offer-luggage" checked>
-          <label class="event__offer-label" for="${some.title}-${some.id}">
+          <label class="event__offer-label" for="${some.id}">
             <span class="event__offer-title">${some.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${some.price}</span>
           </label>
         </div>`)
-    ).join('<br>');
+    ).join('');
 
   return (
     `<li class="trip-events__item">
@@ -166,7 +165,7 @@ export default class EditForm extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this.#editForm, this.#offer);
   };
 
   setRollupClickHandler = (callback) => {

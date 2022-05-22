@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizeDate} from '../utils.js';
+import {humanizeDate} from '../utils/utils.js';
 
 const BLANK_FORM = {
   basePrice: '',
@@ -7,6 +7,7 @@ const BLANK_FORM = {
   dateFrom: null,
   dateTo: null,
   type: '',
+  isFavorite: false
 };
 
 const createFormCreationTemplate = (point = {}, offersArr) => {
