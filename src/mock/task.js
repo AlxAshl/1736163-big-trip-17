@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
 
 const TYPES = [
@@ -164,8 +165,9 @@ export const generatePoint = () => ({
   dateFrom: '2019-07-10T11:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
   destination: generateDestination(),
-  id: 0,
+  id: nanoid(),
   isFavorite: getBool(),
   offers: [1, 2],
   type: TYPES[getType()],
 });
+
