@@ -7,19 +7,16 @@ const TYPES = [
   'train',
   'ship',
   'drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant'
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant'
 ];
 
 const CITIES = [
   'Amsterdam',
-  'Copenhagen',
-  'Bernex',
-  'Monaco',
-  'Toulouse',
-  'Hamburg'
+  'Geneva',
+  'Chamonix'
 ];
 
 const DESCRIPTIONS = [
@@ -99,7 +96,7 @@ export const OFFERS = [
     ]
   },
   {
-    type: 'Flight',
+    type: 'flight',
     offers: [
       {
         id: 1,
@@ -113,7 +110,7 @@ export const OFFERS = [
     ]
   },
   {
-    type: 'Check-in',
+    type: 'check-in',
     offers: [
       {
         id: 1,
@@ -123,7 +120,7 @@ export const OFFERS = [
     ]
   },
   {
-    type: 'Sightseeing',
+    type: 'sightseeing',
     offers: [
       {
         id: 1,
@@ -133,7 +130,7 @@ export const OFFERS = [
     ]
   },
   {
-    type: 'Restaurant',
+    type: 'restaurant',
     offers: [
       {
         id: 1,
@@ -148,26 +145,85 @@ const getValue = (value) => value[getRandomInteger(0,value.length -1)];
 const getType = () => getRandomInteger(0, 8);
 const getBool = () => getRandomInteger(0, 1);
 
-export const generateDestination = () => ({
-  description: getValue(DESCRIPTIONS),
-  name: getValue(CITIES),
-  pictures: [
-    {
-      src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
-      description: getValue(DESCRIPTIONS)
-    }
-  ]
-});
+export const DESTINATIONS = [
+  {
+    description: getValue(DESCRIPTIONS),
+    name: 'Amsterdam',
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+    ]
+  },
+  {
+    description: getValue(DESCRIPTIONS),
+    name: 'Geneva',
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+    ]
+  },
+  {
+    description: getValue(DESCRIPTIONS),
+    name: 'Chamonix',
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+    ]
+  },
+];
 
 export const generatePoint = () => ({
   getValue,
   basePrice: getRandomInteger(50, 2000),
   dateFrom: '2019-07-10T11:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
-  destination: generateDestination(),
+  destination: getValue(DESTINATIONS),//NEW changed from generateDestination() / getValue(DESTINATIONS)
   id: nanoid(),
   isFavorite: getBool(),
-  offers: [1, 2],
+  offers: [1,2],
   type: TYPES[getType()],
+  destName: getValue(CITIES)//NEW FIELD
 });
 

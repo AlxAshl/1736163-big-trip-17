@@ -1,26 +1,49 @@
-import AbstractView from '../framework/view/abstract-view.js';
+//import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizeDate} from '../utils/point.js';
 
-const createEditFormTemplate = (point, offers) => {
+const BLANK_FORM = {
+  basePrice: '',
+  dateFrom: null,
+  dateTo: null,
+  type: '',
+  isFavorite: false,
+  offers: []
+};
 
-  const {basePrice, dateFrom, dateTo, type} = point;
+const createEditFormTemplate = (point, offersList, destinations) => {
+
+  const {basePrice, dateFrom, dateTo, type, destName, destination, offers} = point;
   const startTime = humanizeDate(dateFrom);
   const finishTime = humanizeDate(dateTo);
   // деструктурировать offers
-  const pointTypeOffer = offers
-    .find((offer) => offer.type === point.type);
+  console.log(point)
+  const pointTypeOffer = offersList
+    .find((selectedOffer) => selectedOffer.type === point.type);
 
   const createOffers = () =>
-    pointTypeOffer.offers.map((some) => (
-      `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="event-offer-luggage" checked>
-          <label class="event__offer-label" for="${some.id}">
-            <span class="event__offer-title">${some.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${some.price}</span>
-          </label>
-        </div>`)
-    ).join('');
+    pointTypeOffer.offers.map((some) => {
+      const checked = offers.includes(some.id) ? 'checked' : '';
+      return `<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="${some.title.replace(/ /ig, '-')}" ${checked}>
+                <label class="event__offer-label" for="${some.id}">
+                  <span class="event__offer-title">${some.title}</span>
+                  &plus;&euro;&nbsp;
+                  <span class="event__offer-price">${some.price}</span>
+                </label>
+              </div>`;
+    }).join('');
+
+  /*const pointDestination = destinations
+    .find((dest) => dest.name === point.destName);
+
+  const createDescriprions = () =>
+    pointDestination.description.map((description) => `<p class="event__destination-description">${description}</p>`);
+
+  const createPictures = () =>
+    pointDestination.pictures.map((picture) => (
+      `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`)
+    ).join('');*/
 
   return (
     `<li class="trip-events__item">
@@ -89,7 +112,7 @@ const createEditFormTemplate = (point, offers) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destName/*!!!!*/}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -125,37 +148,40 @@ const createEditFormTemplate = (point, offers) => {
 
             <div class="event__available-offers">
               ${createOffers()}
-
-
-
-
           </section>
 
           <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
-          </section>
-        </section>
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            ${destination.description}
+
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              {createPictures()}
+
+            </div>
       </form>
     </li>`
   );
 };
+//${createDescriprions()}
 
-export default class EditForm extends AbstractView {
+export default class EditForm extends AbstractStatefulView {
 
-  #editForm = null;
   #offer = null;
+  #destination = null;
 
-  constructor(editForm, offer) {
+  constructor(editForm = BLANK_FORM, offer, destinations) {
     super();
-
-    this.#editForm = editForm;
-
+    this._state = EditForm.parsePointToState(editForm);
     this.#offer = offer;
+    this.#destination = destinations;
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEditFormTemplate(this.#editForm, this.#offer);
+    return createEditFormTemplate(this._state, this.#offer, this.#destination);
   }
 
   setSubmitClickHandler = (callback) => {
@@ -163,9 +189,14 @@ export default class EditForm extends AbstractView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setSubmitClickHandler(this._callback.formSubmit);
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#editForm, this.#offer);
+    this._callback.formSubmit(EditForm.parseStateToPoint(this._state, this.#offer));
   };
 
   setRollupClickHandler = (callback) => {
@@ -176,6 +207,47 @@ export default class EditForm extends AbstractView {
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.rollupClick();
+  };
+
+  #typeSelectHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+    });
+
+  };
+
+  #offerSelectHandler = (evt) => {
+    console.log(evt.target.id);
+    this._setState({
+      offers: [evt.target.id]
+      // offerID: evt.target.name.replace(/-/ig, ' ')
+
+    });
+  };
+
+  #destinationSelectHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destName: evt.target.value,
+    });
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationSelectHandler); //ДОБАВИТЬ СЮДА ОБРАБОТЧИКИ
+    this.element.querySelector('.event__type-group')
+      .addEventListener('input', this.#typeSelectHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offerSelectHandler);
+  };
+
+  static parsePointToState = (editForm) => ({...editForm
+  });
+
+  static parseStateToPoint = (state) => {
+    const editForm = {...state};
+    return editForm;
   };
 }
 

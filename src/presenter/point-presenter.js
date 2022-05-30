@@ -14,6 +14,7 @@ export default class PointPresenter {
 
   #point = null;
   #offer = null;
+  #destination = null;
 
   #changeMode = null;
   #changeData = null;
@@ -26,16 +27,17 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point, offer) => {
+  init = (point, offer, destinations) => {//NEW destinations
 
     this.#point = point;
     this.#offer = offer;
+    this.#destination = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditForm;
 
-    this.#pointComponent = new Waypoint(point, offer);
-    this.#pointEditForm = new EditForm(point, offer);
+    this.#pointComponent = new Waypoint(point, offer, destinations);//NEW DESTINATION
+    this.#pointEditForm = new EditForm(point, offer, destinations);//NEW DESTINATION
 
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointComponent.setRollupClickHandler(this.#handlePointRollupClick);
@@ -100,13 +102,12 @@ export default class PointPresenter {
     this.#replaceFormToPoint();
   };
 
-  #handleSubmitClick = (point, offer) => {
+  #handleSubmitClick = (point, offer, destinations) => {
     this.#replaceFormToPoint();
-    this.#changeData(point, offer);
+    this.#changeData(point, offer, destinations);
   };
 
   #handleFavoriteClick = (...offer) => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite}, offer[1]);//это нормально что я тут так передал offer? ибо других идей у меня нет :)
+    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite}, offer[1]);
   };
-
 }
