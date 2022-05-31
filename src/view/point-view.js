@@ -3,8 +3,8 @@ import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
 
 const createWaypoint = (point, offersList, destinations) => { //NEW
-
-  const {basePrice, dateFrom, dateTo, type, isFavorite, destName, offers} = point;// NEW destName
+  // const {name, pictures, description} = destinations;
+  const {basePrice, dateFrom, dateTo, type, isFavorite, destination, offers} = point;// NEW destName
   const pointTypeOffer = offersList
     .find((offer) => offer.type === point.type);
   const offerList = pointTypeOffer.offers;
@@ -45,7 +45,7 @@ const createWaypoint = (point, offersList, destinations) => { //NEW
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destName}</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${startTime}</time>

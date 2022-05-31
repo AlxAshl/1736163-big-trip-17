@@ -1,4 +1,3 @@
-//import AbstractView from '../framework/view/abstract-view.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizeDate} from '../utils/point.js';
 
@@ -8,16 +7,15 @@ const BLANK_FORM = {
   dateTo: null,
   type: '',
   isFavorite: false,
-  offers: []
 };
 
 const createEditFormTemplate = (point, offersList, destinations) => {
 
-  const {basePrice, dateFrom, dateTo, type, destName, destination, offers} = point;
+  const {basePrice, dateFrom, dateTo, type, destination, offers, newDestinationPoint} = point;
   const startTime = humanizeDate(dateFrom);
   const finishTime = humanizeDate(dateTo);
   // деструктурировать offers
-  console.log(point)
+
   const pointTypeOffer = offersList
     .find((selectedOffer) => selectedOffer.type === point.type);
 
@@ -34,16 +32,18 @@ const createEditFormTemplate = (point, offersList, destinations) => {
               </div>`;
     }).join('');
 
-  /*const pointDestination = destinations
-    .find((dest) => dest.name === point.destName);
-
-  const createDescriprions = () =>
-    pointDestination.description.map((description) => `<p class="event__destination-description">${description}</p>`);
+  if (newDestinationPoint !== undefined) {
+    const newObject = destinations
+      .find((dest) => dest.name === newDestinationPoint.name);
+    destination.name = newObject.name;
+    destination.description = newObject.description;
+    destination.pictures = newObject.pictures;// тестировать на баг
+  }
 
   const createPictures = () =>
-    pointDestination.pictures.map((picture) => (
+    destination.pictures.map((picture) => (
       `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`)
-    ).join('');*/
+    ).join('');
 
   return (
     `<li class="trip-events__item">
@@ -112,7 +112,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destName/*!!!!*/}" list="destination-list-1" required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -152,28 +152,27 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${destination.description}
+            <p class="event__destination-description">${destination.description}</p>
 
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              {createPictures()}
+              ${createPictures()}
 
             </div>
       </form>
     </li>`
   );
 };
-//${createDescriprions()}
 
 export default class EditForm extends AbstractStatefulView {
 
   #offer = null;
   #destination = null;
 
-  constructor(editForm = BLANK_FORM, offer, destinations) {
+  constructor(point = BLANK_FORM, offer, destinations) {
     super();
-    this._state = EditForm.parsePointToState(editForm);
+    this._state = EditForm.parsePointToState(point);
     this.#offer = offer;
     this.#destination = destinations;
 
@@ -196,7 +195,8 @@ export default class EditForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EditForm.parseStateToPoint(this._state, this.#offer));
+    this._callback.formSubmit(EditForm.parseStateToPoint(this._state, this.#offer, this.#destination));
+    console.log(this.#destination)
   };
 
   setRollupClickHandler = (callback) => {
@@ -229,9 +229,16 @@ export default class EditForm extends AbstractStatefulView {
   #destinationSelectHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      destName: evt.target.value,
+      newDestinationPoint: {name: evt.target.value},
     });
   };
+
+  // #descriptionInputHandler = (evt) => {
+  //   evt.preventDefault();
+  //   this._setState({
+  //     description: evt.target.value,
+  //   });
+  // };
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__input--destination')
@@ -240,13 +247,17 @@ export default class EditForm extends AbstractStatefulView {
       .addEventListener('input', this.#typeSelectHandler);
     this.element.querySelector('.event__available-offers')
       .addEventListener('change', this.#offerSelectHandler);
+    // this.element.querySelector('.event__available-offers')
+    //   .addEventListener('input', this.#descriptionInputHandler);
   };
 
-  static parsePointToState = (editForm) => ({...editForm
+  static parsePointToState = (point) => ({...point
   });
 
-  static parseStateToPoint = (state) => {
+  static parseStateToPoint = (state, offer, destinations) => {
     const editForm = {...state};
+    console.log(editForm)
+    delete editForm.newDestinationPoint;
     return editForm;
   };
 }

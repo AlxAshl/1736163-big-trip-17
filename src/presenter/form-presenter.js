@@ -24,10 +24,9 @@ export default class FormPresenter {
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
-  #handlePointChange = (updatedPoint) => {//убрал второй аргумент offer
+  #handlePointChange = (updatedPoint) => {
     this.#formPoints = updateItem(this.#formPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#formOffers);//который был тут
-    // this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#formDestinations);// NEW добавил на всякий случай - точно не работает!
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#formOffers);
   };
 
   #renderSort = () => {
@@ -58,7 +57,7 @@ export default class FormPresenter {
   #renderPoints = (from, to) => {
     this.#formPoints
       .slice(from, to)
-      .forEach((point) => this.#renderPoint(point, this.#formOffers));
+      .forEach((point) => this.#renderPoint(point, this.#formOffers, this.#formDestinations));
   };
 
   #renderNoPoints = () => {

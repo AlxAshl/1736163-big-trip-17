@@ -148,6 +148,28 @@ const getBool = () => getRandomInteger(0, 1);
 export const DESTINATIONS = [
   {
     description: getValue(DESCRIPTIONS),
+    name: 'Copenhagen',
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(1,10)}`,
+        description: getValue(DESCRIPTIONS)
+      },
+    ]
+  },
+  {
+    description: getValue(DESCRIPTIONS),
     name: 'Amsterdam',
     pictures: [
       {
@@ -215,15 +237,13 @@ export const DESTINATIONS = [
 ];
 
 export const generatePoint = () => ({
-  getValue,
   basePrice: getRandomInteger(50, 2000),
   dateFrom: '2019-07-10T11:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
-  destination: getValue(DESTINATIONS),//NEW changed from generateDestination() / getValue(DESTINATIONS)
+  destination: DESTINATIONS[0],//NEW changed from generateDestination() / getValue(DESTINATIONS)
   id: nanoid(),
   isFavorite: getBool(),
-  offers: [1,2],
+  offers: [1],
   type: TYPES[getType()],
-  destName: getValue(CITIES)//NEW FIELD
 });
 
