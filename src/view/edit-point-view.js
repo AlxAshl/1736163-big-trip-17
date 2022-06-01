@@ -234,6 +234,7 @@ export default class EditForm extends AbstractStatefulView {
     else {
       evt.target.setAttribute('checked', true);
       newState.push(Number(evt.target.id));
+      newState.sort();
     }
     this._setState({
       offers: newState
