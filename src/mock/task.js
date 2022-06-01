@@ -13,11 +13,11 @@ const TYPES = [
   'restaurant'
 ];
 
-const CITIES = [
-  'Amsterdam',
-  'Geneva',
-  'Chamonix'
-];
+// const CITIES = [
+//   'Amsterdam',
+//   'Geneva',
+//   'Chamonix'
+// ];
 
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

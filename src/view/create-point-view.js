@@ -10,7 +10,7 @@ const BLANK_FORM = {
   isFavorite: false
 };
 
-const createFormCreationTemplate = (point = {}, offersArr, destinations) => {
+const createFormCreationTemplate = (point = {}, offersArr) => {
 
   const {
     basePrice= '',

@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
 
-const createWaypoint = (point, offersList, destinations) => { //NEW
+const createWaypoint = (point, offersList, /*destinations*/) => { //NEW
   // const {name, pictures, description} = destinations;
   const {basePrice, dateFrom, dateTo, type, isFavorite, destination, offers} = point;// NEW destName
   const pointTypeOffer = offersList
@@ -22,7 +22,7 @@ const createWaypoint = (point, offersList, destinations) => { //NEW
         <span class="event__offer-price">${offer.price}</span>
       </li>`
     )
-    ).join('<br>');
+    ).join('');
 
   const date = humanizeEventDate(dateFrom);
   const startTime = humanizeEventTime(dateFrom);
@@ -100,6 +100,7 @@ export default class Waypoint extends AbstractView {
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
+    console.log('Point#rollupClickHandler')
     this._callback.rollupClick();
   };
 

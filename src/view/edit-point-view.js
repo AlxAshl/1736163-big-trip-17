@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizeDate} from '../utils/point.js';
 
-const BLANK_FORM = {
+const BLANK_POINT = {
   basePrice: '',
   dateFrom: null,
   dateTo: null,
@@ -21,7 +21,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
   const createOffers = () =>
     pointTypeOffer.offers.map((some) => {
-      const checked = offers.includes(some.id) ? 'checked' : '';
+      const checked = offers.includes(some.id) ? 'checked = true' : '';
       return `<div class="event__offer-selector">
                 <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="${some.title.replace(/ /ig, '-')}" ${checked}>
                 <label class="event__offer-label" for="${some.id}">
@@ -86,7 +86,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                   <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                 </div>
 
@@ -170,7 +170,7 @@ export default class EditForm extends AbstractStatefulView {
   #offer = null;
   #destination = null;
 
-  constructor(point = BLANK_FORM, offer, destinations) {
+  constructor(point = BLANK_POINT, offer, destinations) {
     super();
     this._state = EditForm.parsePointToState(point);
     this.#offer = offer;
@@ -188,15 +188,21 @@ export default class EditForm extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  reset = (point) => {
+    this.updateElement(
+      EditForm.parsePointToState(point)
+    );
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setSubmitClickHandler(this._callback.formSubmit);
+    this.setRollupClickHandler(this._callback.rollupClick);
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(EditForm.parseStateToPoint(this._state, this.#offer, this.#destination));
-    console.log(this.#destination)
   };
 
   setRollupClickHandler = (callback) => {
@@ -206,6 +212,7 @@ export default class EditForm extends AbstractStatefulView {
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
+    //reset
     this._callback.rollupClick();
   };
 
@@ -213,16 +220,23 @@ export default class EditForm extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offers: []
     });
-
   };
 
   #offerSelectHandler = (evt) => {
-    console.log(evt.target.id);
+    const newState = this._state.offers;
+    if(!evt.target.checked) {
+      evt.target.removeAttribute('checked');
+      const index = newState.indexOf(evt.target.id);
+      newState.splice(index,1);
+    }
+    else {
+      evt.target.setAttribute('checked', true);
+      newState.push(Number(evt.target.id));
+    }
     this._setState({
-      offers: [evt.target.id]
-      // offerID: evt.target.name.replace(/-/ig, ' ')
-
+      offers: newState
     });
   };
 
@@ -233,31 +247,22 @@ export default class EditForm extends AbstractStatefulView {
     });
   };
 
-  // #descriptionInputHandler = (evt) => {
-  //   evt.preventDefault();
-  //   this._setState({
-  //     description: evt.target.value,
-  //   });
-  // };
-
   #setInnerHandlers = () => {
     this.element.querySelector('.event__input--destination')
-      .addEventListener('change', this.#destinationSelectHandler); //ДОБАВИТЬ СЮДА ОБРАБОТЧИКИ
+      .addEventListener('change', this.#destinationSelectHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('input', this.#typeSelectHandler);
     this.element.querySelector('.event__available-offers')
       .addEventListener('change', this.#offerSelectHandler);
-    // this.element.querySelector('.event__available-offers')
-    //   .addEventListener('input', this.#descriptionInputHandler);
   };
 
   static parsePointToState = (point) => ({...point
   });
 
-  static parseStateToPoint = (state, offer, destinations) => {
+  static parseStateToPoint = (state) => {
     const editForm = {...state};
-    console.log(editForm)
     delete editForm.newDestinationPoint;
+
     return editForm;
   };
 }
