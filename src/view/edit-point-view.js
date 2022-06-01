@@ -226,16 +226,17 @@ export default class EditForm extends AbstractStatefulView {
 
   #offerSelectHandler = (evt) => {
     const newState = this._state.offers;
-    if(!evt.target.checked) {
-      evt.target.removeAttribute('checked');
+    if(newState.includes(Number(evt.target.id))) {
       const index = newState.indexOf(evt.target.id);
       newState.splice(index,1);
     }
     else {
       evt.target.setAttribute('checked', true);
       newState.push(Number(evt.target.id));
-      newState.sort();
     }
+
+    newState.sort();
+
     this._setState({
       offers: newState
     });
@@ -268,3 +269,19 @@ export default class EditForm extends AbstractStatefulView {
   };
 }
 
+// #offerSelectHandler = (evt) => {
+//   const newState = this._state.offers;
+//   if(!evt.target.checked) {
+//     evt.target.removeAttribute('checked');
+//     const index = newState.indexOf(evt.target.id);
+//     newState.splice(index,1);
+//   }
+//   else {
+//     evt.target.setAttribute('checked', true);
+//     newState.push(Number(evt.target.id));
+//     newState.sort();
+//   }
+//   this._setState({
+//     offers: newState
+//   });
+// };
