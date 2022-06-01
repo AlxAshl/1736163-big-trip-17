@@ -100,7 +100,6 @@ export default class Waypoint extends AbstractView {
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
-    console.log('Point#rollupClickHandler')
     this._callback.rollupClick();
   };
 

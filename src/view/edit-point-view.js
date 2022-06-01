@@ -37,7 +37,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
       .find((dest) => dest.name === newDestinationPoint.name);
     destination.name = newObject.name;
     destination.description = newObject.description;
-    destination.pictures = newObject.pictures;// тестировать на баг
+    destination.pictures = newObject.pictures;
   }
 
   const createPictures = () =>
@@ -212,7 +212,6 @@ export default class EditForm extends AbstractStatefulView {
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
-    //reset
     this._callback.rollupClick();
   };
 
@@ -231,7 +230,6 @@ export default class EditForm extends AbstractStatefulView {
       newState.splice(index,1);
     }
     else {
-      evt.target.setAttribute('checked', true);
       newState.push(Number(evt.target.id));
     }
 
@@ -264,24 +262,6 @@ export default class EditForm extends AbstractStatefulView {
   static parseStateToPoint = (state) => {
     const editForm = {...state};
     delete editForm.newDestinationPoint;
-
     return editForm;
   };
 }
-
-// #offerSelectHandler = (evt) => {
-//   const newState = this._state.offers;
-//   if(!evt.target.checked) {
-//     evt.target.removeAttribute('checked');
-//     const index = newState.indexOf(evt.target.id);
-//     newState.splice(index,1);
-//   }
-//   else {
-//     evt.target.setAttribute('checked', true);
-//     newState.push(Number(evt.target.id));
-//     newState.sort();
-//   }
-//   this._setState({
-//     offers: newState
-//   });
-// };
