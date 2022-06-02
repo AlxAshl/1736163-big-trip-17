@@ -32,14 +32,6 @@ const createEditFormTemplate = (point, offersList, destinations) => {
               </div>`;
     }).join('');
 
-  if (newDestinationPoint !== undefined) {
-    const newObject = destinations
-      .find((dest) => dest.name === newDestinationPoint.name);
-    destination.name = newObject.name;
-    destination.description = newObject.description;
-    destination.pictures = newObject.pictures;
-  }
-
   const createPictures = () =>
     destination.pictures.map((picture) => (
       `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`)
@@ -236,14 +228,22 @@ export default class EditForm extends AbstractStatefulView {
     newState.sort();
 
     this._setState({
-      offers: newState
+      offers: newState,
     });
   };
 
   #destinationSelectHandler = (evt) => {
     evt.preventDefault();
+    const newDestinationPoint = {};
+    newDestinationPoint.name = evt.target.value;
+    const newObject = this.#destination
+      .find((dest) => dest.name === newDestinationPoint.name);
     this.updateElement({
-      newDestinationPoint: {name: evt.target.value},
+      destination: {
+        name: newObject.name,
+        description: newObject.description,
+        pictures: newObject.pictures
+      }
     });
   };
 
