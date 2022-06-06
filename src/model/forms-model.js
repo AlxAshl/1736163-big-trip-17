@@ -1,7 +1,7 @@
 import {generatePoint, OFFERS, DESTINATIONS} from '../mock/task';
 
 export class PointModel {
-  #points = Array.from({length: 1}, generatePoint);
+  #points = Array.from({length: 10}, generatePoint);
   #offers = OFFERS;
   #destinations = DESTINATIONS;
 

@@ -1,5 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizeDate} from '../utils/point.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+//import 'flatpickr/src/plugins/rangePlugin.ts';
 
 const BLANK_POINT = {
   basePrice: '',
@@ -9,9 +12,9 @@ const BLANK_POINT = {
   isFavorite: false,
 };
 
-const createEditFormTemplate = (point, offersList, destinations) => {
+const createEditFormTemplate = (point, offersList, /*destinations*/) => {
 
-  const {basePrice, dateFrom, dateTo, type, destination, offers, newDestinationPoint} = point;
+  const {basePrice, dateFrom, dateTo, type, destination, offers} = point;
   const startTime = humanizeDate(dateFrom);
   const finishTime = humanizeDate(dateTo);
   // деструктурировать offers
@@ -159,6 +162,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
 export default class EditForm extends AbstractStatefulView {
 
+  #datepicker = null;
   #offer = null;
   #destination = null;
 
@@ -169,6 +173,8 @@ export default class EditForm extends AbstractStatefulView {
     this.#destination = destinations;
 
     this.#setInnerHandlers();
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
   }
 
   get template() {
@@ -190,6 +196,8 @@ export default class EditForm extends AbstractStatefulView {
     this.#setInnerHandlers();
     this.setSubmitClickHandler(this._callback.formSubmit);
     this.setRollupClickHandler(this._callback.rollupClick);
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
   };
 
   #formSubmitHandler = (evt) => {
@@ -228,7 +236,7 @@ export default class EditForm extends AbstractStatefulView {
     newState.sort();
 
     this._setState({
-      offers: newState,
+      point: {offers: newState},
     });
   };
 
@@ -263,5 +271,56 @@ export default class EditForm extends AbstractStatefulView {
     const editForm = {...state};
     delete editForm.newDestinationPoint;
     return editForm;
+  };
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+  #setFromDatepicker = () => {
+    if (this._state.dateFrom) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-start-time-1'),
+        {
+          minDate: this._state.dateTo,
+          dateFormat: 'j/m/y H:i',
+          enableTime: true,
+          defaultDate: this._state.dateFrom,
+          onChange: this.#dateFromChangeHandler,
+        },
+      );
+    }
+  };
+
+  #setToDatepicker = () => {
+    if (this._state.dateTo) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-end-time-1'),
+        {
+          minDate: this._state.dateFrom,
+          dateFormat: 'j/m/y H:i',
+          enableTime: true,
+          defaultDate: this._state.dateTo,
+          onChange: this.#dateToChangeHandler,
+        },
+      );
+    }
   };
 }

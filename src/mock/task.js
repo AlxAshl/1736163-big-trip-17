@@ -1,5 +1,6 @@
 import {nanoid} from 'nanoid';
 import {getRandomInteger} from '../utils/common.js';
+import {randomDate} from '../utils/utils.js';
 
 const TYPES = [
   'taxi',
@@ -238,8 +239,8 @@ export const DESTINATIONS = [
 
 export const generatePoint = () => ({
   basePrice: getRandomInteger(50, 2000),
-  dateFrom: '2019-07-10T11:55:56.845Z',
-  dateTo: '2019-07-11T11:22:13.375Z',
+  dateFrom: `${randomDate(new Date(getRandomInteger(2021, 2022), 4, 1), new Date())}`,
+  dateTo: `${randomDate(new Date(getRandomInteger(2021, 2022), 5, 1), new Date())}`,
   destination: DESTINATIONS[0],//NEW changed from generateDestination() / getValue(DESTINATIONS)
   id: nanoid(),
   isFavorite: getBool(),

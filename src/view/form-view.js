@@ -1,3 +1,4 @@
+//Задание 3.2
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createFormTemplate = () => '<ul class="trip-events__list"></ul>';
