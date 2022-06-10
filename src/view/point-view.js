@@ -110,6 +110,6 @@ export default class Waypoint extends AbstractView {
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick(this.#point, this.#offer);
+    this._callback.favoriteClick(this.#point, this.#offer);// убрать оффер?
   };
 }

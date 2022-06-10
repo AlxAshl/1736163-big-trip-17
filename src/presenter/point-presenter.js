@@ -1,6 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import Waypoint from '../view/point-view.js';
 import EditForm from '../view/edit-point-view.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -27,7 +28,7 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point, offer, destinations) => {//NEW destinations
+  init = (point, offer, destinations) => {
 
     this.#point = point;
     this.#offer = offer;
@@ -36,13 +37,14 @@ export default class PointPresenter {
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditForm;
 
-    this.#pointComponent = new Waypoint(point, offer, destinations);//NEW DESTINATION
-    this.#pointEditForm = new EditForm(point, offer, destinations);//NEW DESTINATION
+    this.#pointComponent = new Waypoint(point, offer, destinations);
+    this.#pointEditForm = new EditForm(point, offer, destinations);
 
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointComponent.setRollupClickHandler(this.#handlePointRollupClick);
     this.#pointEditForm.setRollupClickHandler(this.#handleFormRollupClick);
     this.#pointEditForm.setSubmitClickHandler(this.#handleSubmitClick);
+    this.#pointEditForm.setDeleteClickHandler(this.#handleDeleteClick); // COMMIT 6 - DELETE CLICK
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#pointContainer);
@@ -69,7 +71,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#pointEditForm.reset(this.#point);//---------------------
+      this.#pointEditForm.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -90,7 +92,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#pointEditForm.reset(this.#point);//--------------------
+      this.#pointEditForm.reset(this.#point);
       this.#replaceFormToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -105,12 +107,31 @@ export default class PointPresenter {
     this.#replaceFormToPoint();
   };
 
-  #handleSubmitClick = (point, offer, destinations) => {
+  #handleSubmitClick = (point) => { // пока ничерта не работает (КОММИТ 3)
+    //возможно потребуется разделение на "тяжесть" апдейта, пока не вижу смысла. (7.1.6)
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,//patch?
+      point
+    );
     this.#replaceFormToPoint();
-    this.#changeData(point, offer, destinations);
+    this.#changeData(point);
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
   #handleFavoriteClick = (...offer) => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite}, offer[1]);
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite},//чето отлетело убрал offer[1]), вроде теперь заработало
+      this.offer,
+    );
   };
 }

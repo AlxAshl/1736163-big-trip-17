@@ -198,6 +198,7 @@ export default class EditForm extends AbstractStatefulView {
     this.setRollupClickHandler(this._callback.rollupClick);
     this.#setFromDatepicker();
     this.#setToDatepicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #formSubmitHandler = (evt) => {
@@ -232,9 +233,7 @@ export default class EditForm extends AbstractStatefulView {
     else {
       newState.push(Number(evt.target.id));
     }
-
     newState.sort();
-
     this._setState({
       point: {offers: newState},
     });
@@ -307,6 +306,16 @@ export default class EditForm extends AbstractStatefulView {
         },
       );
     }
+  };
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditForm.parseStateToPoint(this._state));
   };
 
   #setToDatepicker = () => {
