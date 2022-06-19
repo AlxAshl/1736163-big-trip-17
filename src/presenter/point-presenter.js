@@ -22,7 +22,6 @@ export default class PointPresenter {
   #mode = Mode.DEFAULT;
 
   constructor(pointContainer, changeData, changeMode) {
-
     this.#pointContainer = pointContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
@@ -44,7 +43,7 @@ export default class PointPresenter {
     this.#pointComponent.setRollupClickHandler(this.#handlePointRollupClick);
     this.#pointEditForm.setRollupClickHandler(this.#handleFormRollupClick);
     this.#pointEditForm.setSubmitClickHandler(this.#handleSubmitClick);
-    this.#pointEditForm.setDeleteClickHandler(this.#handleDeleteClick); // COMMIT 6 - DELETE CLICK
+    this.#pointEditForm.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#pointContainer);
@@ -56,7 +55,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditForm, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -67,6 +67,24 @@ export default class PointPresenter {
   destroy = () => {
     remove(this.#pointComponent);
     remove(this.#pointEditForm);
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditForm.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditForm.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
   };
 
   resetView = () => {
@@ -107,15 +125,14 @@ export default class PointPresenter {
     this.#replaceFormToPoint();
   };
 
-  #handleSubmitClick = (point) => { // пока ничерта не работает (КОММИТ 3)
-    //возможно потребуется разделение на "тяжесть" апдейта, пока не вижу смысла. (7.1.6)
+  #handleSubmitClick = (point) => {
+    // потребуется разделение на "тяжесть" апдейта(7.1.6)
     this.#changeData(
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_POINT,
       UpdateType.MINOR,//patch?
       point
     );
-    this.#replaceFormToPoint();
-    this.#changeData(point);
+    this.#changeData(point);// дописать бейспрайс + дата + город (см 8.2.3)
   };
 
   #handleDeleteClick = (point) => {
@@ -126,12 +143,28 @@ export default class PointPresenter {
     );
   };
 
-  #handleFavoriteClick = (...offer) => {
+  #handleFavoriteClick = () => {
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      {...this.#point, isFavorite: !this.#point.isFavorite},//чето отлетело убрал offer[1]), вроде теперь заработало
-      this.offer,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
     );
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditForm.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditForm.shake(resetFormState);
   };
 }

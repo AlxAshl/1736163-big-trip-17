@@ -1,10 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
-const createWaypoint = (point, offersList, /*destinations*/) => { //NEW
+const createWaypoint = (point, offersList, /*destinations*/) => {
   // const {name, pictures, description} = destinations;
-  const {basePrice, dateFrom, dateTo, type, isFavorite, destination, offers} = point;// NEW destName
+  const {basePrice, dateFrom, dateTo, type, isFavorite, destination, offers} = point;
   const pointTypeOffer = offersList
     .find((offer) => offer.type === point.type);
   const offerList = pointTypeOffer.offers;
@@ -45,7 +46,7 @@ const createWaypoint = (point, offersList, /*destinations*/) => { //NEW
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination.name}</h3>
+        <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${startTime}</time>
@@ -79,13 +80,13 @@ export default class Waypoint extends AbstractView {
 
   #point = null;
   #offer = null;
-  #destination = null;//NEW
+  #destination = null;
 
   constructor(point, offer, destinations) {
     super();
 
     this.#point = point;
-    this.#destination = destinations; //NEW
+    this.#destination = destinations;
     this.#offer = offer;
   }
 
@@ -110,6 +111,6 @@ export default class Waypoint extends AbstractView {
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick(this.#point, this.#offer);// убрать оффер?
+    this._callback.favoriteClick(this.#point, this.#offer);
   };
 }

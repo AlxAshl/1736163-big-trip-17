@@ -1,4 +1,3 @@
-//Задание 4.2
 import {FilterType} from '../const';
 import {humanizeDate} from '../utils/point.js';
 

@@ -1,4 +1,3 @@
-//Задание 5.2
 import AbstractView from '../framework/view/abstract-view.js';
 import {SortType} from '../const.js';
 
@@ -36,13 +35,12 @@ const createSortTemplate = (currentSortType) => (
 export default class SortView extends AbstractView {
   #currentSortType = null;
 
-  constructor(currentSortType) { //COMMIT 5
+  constructor(currentSortType) {
     super();
     this.#currentSortType = currentSortType;
   }
 
   get template() {
-    //return createSortTemplate();
     return createSortTemplate(this.#currentSortType);
   }
 

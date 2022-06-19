@@ -1,10 +1,10 @@
-//Задание 4.2
+
 const FilterType = {
   FUTURE: 'FUTURE',
   EVERYTHING: 'EVERYTHING',
   PAST: 'PAST',
 };
-//Задание 5.2
+
 const SortType = {
   DAY: 'day',
   TIME: 'time',
@@ -21,5 +21,6 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 export {FilterType, SortType, UserAction, UpdateType};

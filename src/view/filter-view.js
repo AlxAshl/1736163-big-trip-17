@@ -11,7 +11,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
         >
       </div>`
   );
-};//value="${type}" вместо просто валью = еверисинг, хз пока зачем, но пусть
+};
 
 const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems
