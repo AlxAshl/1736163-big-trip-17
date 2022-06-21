@@ -1,4 +1,3 @@
-
 const FilterType = {
   FUTURE: 'FUTURE',
   EVERYTHING: 'EVERYTHING',

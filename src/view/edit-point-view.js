@@ -4,15 +4,6 @@ import {humanizeDate} from '../utils/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-
-const BLANK_POINT = {
-  basePrice: '',
-  dateFrom: null,
-  dateTo: null,
-  type: '',
-  isFavorite: false,
-};
-
 const createEditFormTemplate = (point, offersList, destinations) => {
 
   const {
@@ -33,14 +24,14 @@ const createEditFormTemplate = (point, offersList, destinations) => {
   const pointTypeOffer = offersList
     .find((selectedOffer) => selectedOffer.type === point.type);
   const createOffers = () =>
-    pointTypeOffer.offers.map((some) => {
-      const checked = offers.includes(some.id) ? 'checked = true' : '';
+    pointTypeOffer.offers.map((offer) => {
+      const checked = offers.includes(offer.id) ? 'checked = true' : '';
       return `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="${some.id}" type="checkbox" name="${some.title.replace(/ /ig, '-')}" ${checked} ${isDisabled ? 'disabled' : ''}>
-                <label class="event__offer-label" for="${some.id}">
-                  <span class="event__offer-title">${some.title}</span>
+                <input class="event__offer-checkbox  visually-hidden" id="${offer.id}" type="checkbox" name="${offer.title.replace(/ /ig, '-')}" ${checked} ${isDisabled ? 'disabled' : ''}>
+                <label class="event__offer-label" for="${offer.id}">
+                  <span class="event__offer-title">${offer.title}</span>
                   &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${some.price}</span>
+                  <span class="event__offer-price">${offer.price}</span>
                 </label>
               </div>`;
     }).join('');
@@ -137,10 +128,10 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''} required>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''} required>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -181,12 +172,11 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 };
 
 export default class EditForm extends AbstractStatefulView {
-
   #datepicker = null;
   #offer = null;
   #destination = null;
 
-  constructor(point = BLANK_POINT, offer, destinations) {
+  constructor(point, offer, destinations) {
     super();
     this._state = EditForm.parsePointToState(point);
     this.#offer = offer;

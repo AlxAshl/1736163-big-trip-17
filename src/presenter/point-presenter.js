@@ -126,13 +126,12 @@ export default class PointPresenter {
   };
 
   #handleSubmitClick = (point) => {
-    // потребуется разделение на "тяжесть" апдейта(7.1.6)
     this.#changeData(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,//patch?
+      UpdateType.MINOR,
       point
     );
-    this.#changeData(point);// дописать бейспрайс + дата + город (см 8.2.3)
+    this.#changeData(point);
   };
 
   #handleDeleteClick = (point) => {

@@ -39,14 +39,10 @@ export default class FormPresenter {
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-
     this.#filterModel = filterModel;
-
     this.#pointNewPresenter = new NewPointPresenter(this.#formComponent.element, this.#handleViewAction);
-
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
   }
 
   get points() {
@@ -161,10 +157,6 @@ export default class FormPresenter {
   #renderLoading = () => {
     render(this.#loadingComponent, this.#formComponent.element, RenderPosition.AFTERBEGIN);
   };
-
-  //#renderPriceTag = () => {}
-
-  //#renderDestinationsTag = () => {}
 
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);

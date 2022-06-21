@@ -9,18 +9,13 @@ const Mode = {
 };
 
 export default class NewPointPresenter {
-  #pointEditForm = null;
   #pointContainer = null;
   #pointEditComponent = null;
-  #point = null;
-  #offer = null;
-  #destination = null;
   #destroyCallback = null;
   #changeData = null;
   #mode = Mode.DEFAULT;
 
   constructor(pointContainer, changeData) {
-
     this.#pointContainer = pointContainer;
     this.#changeData = changeData;
   }
@@ -73,7 +68,6 @@ export default class NewPointPresenter {
   };
 
   #handleSubmitClick = (point) => {
-    // потребуется разделение на "тяжесть" апдейта (7.1.6)
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,

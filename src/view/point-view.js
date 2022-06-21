@@ -3,9 +3,18 @@ import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
 import he from 'he';
 
-const createWaypoint = (point, offersList, /*destinations*/) => {
-  // const {name, pictures, description} = destinations;
-  const {basePrice, dateFrom, dateTo, type, isFavorite, destination, offers} = point;
+const createWaypoint = (point, offersList) => {
+
+  const {
+    basePrice,
+    dateFrom,
+    dateTo,
+    type,
+    isFavorite,
+    destination,
+    offers
+  } = point;
+
   const pointTypeOffer = offersList
     .find((offer) => offer.type === point.type);
   const offerList = pointTypeOffer.offers;
@@ -36,8 +45,18 @@ const createWaypoint = (point, offersList, /*destinations*/) => {
   const date1 = dayjs(dateFrom);
   const date2 = dayjs(dateTo);
   let minutes = date2.diff(date1, 'minutes');
+  const days = Math.floor(minutes/1440);
+  minutes = minutes - (days * 1440);
   const hours = Math.floor(minutes/60);
   minutes = minutes - (hours * 60);
+  const daysCounter = () => {
+    if (days) {
+      return (`${days}D`);
+    }
+    else {
+      return ('');
+    }
+  };
 
   return (
     `<li class = "trip-events__item">
@@ -53,7 +72,7 @@ const createWaypoint = (point, offersList, /*destinations*/) => {
             &mdash;
             <time class="event__end-time" datetime="${dateTo}">${finishTime}</time>
           </p>
-          <p class="event__duration">${hours}H${minutes}M</p>
+          <p class="event__duration">${daysCounter()} ${hours}H ${minutes}M</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
