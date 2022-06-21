@@ -73,7 +73,7 @@ export default class FormPresenter {
 
   #handleViewAction = async (actionType, updateType, update) => {
 
-    // this.#uiBlocker.block();
+    this.#uiBlocker.block();
 
     switch (actionType) {
       case UserAction.UPDATE_POINT:
