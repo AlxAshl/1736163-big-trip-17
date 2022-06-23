@@ -150,10 +150,10 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <div class="event__field-group  event__field-group--time" required>
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" required ${isDisabled ? 'disabled' : ''}/>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" required ${isDisabled ? 'disabled' : ''} autocomplete="off"/>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}" required ${isDisabled ? 'disabled' : ''}/>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}" required ${isDisabled ? 'disabled' : ''} autocomplete="off"/>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -343,6 +343,7 @@ export default class CreateForm extends AbstractStatefulView {
         this.element.querySelector('#event-start-time-1'),
         {
           maxDate: this._state.dateTo,
+          allowInput: true,
           dateFormat: 'j/m/y H:i',
           enableTime: true,
           defaultDate: this._state.dateFrom,
@@ -359,6 +360,8 @@ export default class CreateForm extends AbstractStatefulView {
         {
           minDate: this._state.dateFrom,
           dateFormat: 'j/m/y H:i',
+          allowInput: true,
+          auto: true,
           enableTime: true,
           defaultDate: this._state.dateTo,
           onChange: this.#dateToChangeHandler,

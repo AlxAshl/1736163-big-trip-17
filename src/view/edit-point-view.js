@@ -18,19 +18,10 @@ const createEditFormTemplate = (point, offersList, destinations) => {
     isDeleting
   } = point;
 
-  let startTime;
-  let finishTime;
-
-  if (dateFrom === null) {
-    startTime = '';
-    finishTime = '';
-  }
-  else {
-    startTime = humanizeDate(dateFrom);
-    finishTime = humanizeDate(dateTo);
-  }
-
+  const startTime = humanizeDate(dateFrom);
+  const finishTime = humanizeDate(dateTo);
   const pointDestinations = destinations;
+
   const pointTypeOffer = offersList
     .find((selectedOffer) => selectedOffer.type === point.type);
   const createOffers = () =>
@@ -138,10 +129,10 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''} autocomplete="off">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''} autocomplete="off">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -335,6 +326,7 @@ export default class EditForm extends AbstractStatefulView {
         {
           maxDate: this._state.dateTo,
           dateFormat: 'j/m/y H:i',
+          allowInput: true,
           enableTime: true,
           defaultDate: this._state.dateFrom,
           onChange: this.#dateFromChangeHandler,
@@ -350,6 +342,7 @@ export default class EditForm extends AbstractStatefulView {
         {
           minDate: this._state.dateFrom,
           dateFormat: 'j/m/y H:i',
+          allowInput: true,
           enableTime: true,
           defaultDate: this._state.dateTo,
           onChange: this.#dateToChangeHandler,
