@@ -1,36 +1,61 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeEventDate, humanizeEventTime} from '../utils/point.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
-const createWaypoint = (point, offers) => {
+const createWaypoint = (point, offersList) => {
 
-  const {basePrice, destination, dateFrom, dateTo, type, isFavorite} = point;
-  const pointTypeOffer = offers
+  const {
+    basePrice,
+    dateFrom,
+    dateTo,
+    type,
+    isFavorite,
+    destination,
+    offers
+  } = point;
+
+  const pointTypeOffer = offersList
     .find((offer) => offer.type === point.type);
-
+  const offerList = pointTypeOffer.offers;
+  const filteredList = [];
+  offers.forEach((offerID) => {
+    filteredList.push(offerList.find((object) => object.id ===  parseInt(offerID, 10)));
+    Object.keys(filteredList).forEach((key) => filteredList[key] === undefined ? delete filteredList[key] : {});
+  }
+  );
   const createOffers = () =>
-    pointTypeOffer.offers.map((offer) => (
+    filteredList.map((offer) => (
       `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>`
     )
-    ).join('<br>');
+    ).join('');
 
   const date = humanizeEventDate(dateFrom);
   const startTime = humanizeEventTime(dateFrom);
   const finishTime = humanizeEventTime(dateTo);
-
+  const date1 = dayjs(dateFrom);
+  const date2 = dayjs(dateTo);
+  let minutes = date2.diff(date1, 'minutes');
+  const days = Math.floor(minutes/1440);
+  minutes = minutes - (days * 1440);
+  const hours = Math.floor(minutes/60);
+  minutes = minutes - (hours * 60);
   const addFavourite = isFavorite
     ? 'event__favorite-btn--active'
     : '';
 
-  const date1 = dayjs(dateFrom);
-  const date2 = dayjs(dateTo);
-  let minutes = date2.diff(date1, 'minutes');
-  const hours = Math.floor(minutes/60);
-  minutes = minutes - (hours * 60);
+  const daysCounter = () => {
+    if (days) {
+      return (`${days}D`);
+    }
+    else {
+      return ('');
+    }
+  };
 
   return (
     `<li class = "trip-events__item">
@@ -39,14 +64,14 @@ const createWaypoint = (point, offers) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination.name}</h3>
+        <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${startTime}</time>
             &mdash;
             <time class="event__end-time" datetime="${dateTo}">${finishTime}</time>
           </p>
-          <p class="event__duration">${hours}H${minutes}M</p>
+          <p class="event__duration">${daysCounter()} ${hours}H ${minutes}M</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -73,17 +98,18 @@ export default class Waypoint extends AbstractView {
 
   #point = null;
   #offer = null;
+  #destination = null;
 
-  constructor(point, offer) {
+  constructor(point, offer, destinations) {
     super();
 
     this.#point = point;
-
+    this.#destination = destinations;
     this.#offer = offer;
   }
 
   get template() {
-    return createWaypoint(this.#point, this.#offer);
+    return createWaypoint(this.#point, this.#offer, this.#destination);
   }
 
   setRollupClickHandler = (callback) => {

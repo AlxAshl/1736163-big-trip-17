@@ -1,6 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import Waypoint from '../view/point-view.js';
 import EditForm from '../view/edit-point-view.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -14,33 +15,35 @@ export default class PointPresenter {
 
   #point = null;
   #offer = null;
+  #destination = null;
 
   #changeMode = null;
   #changeData = null;
   #mode = Mode.DEFAULT;
 
   constructor(pointContainer, changeData, changeMode) {
-
     this.#pointContainer = pointContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
   }
 
-  init = (point, offer) => {
+  init = (point, offer, destinations) => {
 
     this.#point = point;
     this.#offer = offer;
+    this.#destination = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditForm;
 
-    this.#pointComponent = new Waypoint(point, offer);
-    this.#pointEditForm = new EditForm(point, offer);
+    this.#pointComponent = new Waypoint(point, offer, destinations);
+    this.#pointEditForm = new EditForm(point, offer, destinations);
 
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointComponent.setRollupClickHandler(this.#handlePointRollupClick);
     this.#pointEditForm.setRollupClickHandler(this.#handleFormRollupClick);
     this.#pointEditForm.setSubmitClickHandler(this.#handleSubmitClick);
+    this.#pointEditForm.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#pointContainer);
@@ -52,7 +55,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditForm, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -65,8 +69,27 @@ export default class PointPresenter {
     remove(this.#pointEditForm);
   };
 
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditForm.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditForm.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditForm.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -87,6 +110,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditForm.reset(this.#point);
       this.#replaceFormToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -97,16 +121,49 @@ export default class PointPresenter {
   };
 
   #handleFormRollupClick = () => {
+    this.#pointEditForm.reset(this.#point);
     this.#replaceFormToPoint();
   };
 
-  #handleSubmitClick = (point, offer) => {
-    this.#replaceFormToPoint();
-    this.#changeData(point, offer);
+  #handleSubmitClick = (point) => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+    this.#changeData(point);
   };
 
-  #handleFavoriteClick = (...offer) => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite}, offer[1]);//это нормально что я тут так передал offer? ибо других идей у меня нет :)
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
+  #handleFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditForm.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditForm.shake(resetFormState);
+  };
 }
