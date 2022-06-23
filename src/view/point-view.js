@@ -15,6 +15,15 @@ const createWaypoint = (point, offersList) => {
     offers
   } = point;
 
+  let date;
+  let startTime;
+  let finishTime;
+  let date1;
+  let date2;
+  let days;
+  let hours;
+  let minutes;
+
   const pointTypeOffer = offersList
     .find((offer) => offer.type === point.type);
   const offerList = pointTypeOffer.offers;
@@ -34,21 +43,30 @@ const createWaypoint = (point, offersList) => {
     )
     ).join('');
 
-  const date = humanizeEventDate(dateFrom);
-  const startTime = humanizeEventTime(dateFrom);
-  const finishTime = humanizeEventTime(dateTo);
+  if (dateFrom === null) {
+    date = '';
+    startTime = '';
+    finishTime = '';
+    hours = '';
+    minutes = '';
+  }
+  else {
+    date = humanizeEventDate(dateFrom);
+    startTime = humanizeEventTime(dateFrom);
+    finishTime = humanizeEventTime(dateTo);
+    date1 = dayjs(dateFrom);
+    date2 = dayjs(dateTo);
+    minutes = date2.diff(date1, 'minutes');
+    days = Math.floor(minutes/1440);
+    minutes = minutes - (days * 1440);
+    hours = Math.floor(minutes/60);
+    minutes = minutes - (hours * 60);
+  }
 
   const addFavourite = isFavorite
     ? 'event__favorite-btn--active'
     : '';
 
-  const date1 = dayjs(dateFrom);
-  const date2 = dayjs(dateTo);
-  let minutes = date2.diff(date1, 'minutes');
-  const days = Math.floor(minutes/1440);
-  minutes = minutes - (days * 1440);
-  const hours = Math.floor(minutes/60);
-  minutes = minutes - (hours * 60);
   const daysCounter = () => {
     if (days) {
       return (`${days}D`);

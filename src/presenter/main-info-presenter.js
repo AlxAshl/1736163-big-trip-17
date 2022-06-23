@@ -1,14 +1,14 @@
 import MainInfoView from '../view/main-info-view';
 import {render, replace, remove, RenderPosition} from '../framework/render.js';
-// import {SortType} from '../const.js';
 import {sortDayUp} from '../utils/point.js';
+
 export default class MainInfoPresenter{
   #mainInfoContainer = null;
   #pointsModel = null;
   #mainInfoComponent = null;
   #destinationsModel = null;
   #offersModel = null;
-  // #currentSortType = SortType.DAY;
+
 
   constructor(mainInfoContainer, pointsModel, offersModel, destinationsModel) {
     this.#pointsModel = pointsModel;
@@ -30,9 +30,6 @@ export default class MainInfoPresenter{
   get destinations() {
     return this.#destinationsModel.destinations;
   }
-
-  #renderMainInfo = () => {
-  };
 
   init = () => {
     const points = this.points;

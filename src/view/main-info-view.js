@@ -25,10 +25,10 @@ const createMainInfoTemplate = (points, offers) => {
       return (`${points[0].destination.name}`);
     }
     else if (points.length === 3){
-      return (`${points[2].destination.name} &mdash; ${points[1].destination.name} &mdash; ${points[0].destination.name}`);
+      return (`${points[0].destination.name} &mdash; ${points[1].destination.name} &mdash; ${points[2].destination.name}`);
     }
     else{
-      return (`${points[points.length -1].destination.name} &mdash; ${points[0].destination.name} `);
+      return (`${points[0].destination.name} &mdash; ${points[points.length -1].destination.name} `);
     }
   };
 
@@ -40,7 +40,7 @@ const createMainInfoTemplate = (points, offers) => {
       return (`${humanizeEventDate(points.dateFrom)}`);
     }
     else{
-      return (`${humanizeEventDate(points[points.length -1].dateFrom)} &mdash; ${humanizeEventDate(points[0].dateTo)}`);
+      return (`${humanizeEventDate(points[0].dateFrom)} &mdash; ${humanizeEventDate(points[points.length -1].dateTo)}`);
     }
   };
 

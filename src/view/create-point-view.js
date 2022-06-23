@@ -148,12 +148,12 @@ const createEditFormTemplate = (point, offersList, destinations) => {
             </datalist>
           </div>
 
-          <div class="event__field-group  event__field-group--time">
+          <div class="event__field-group  event__field-group--time" required>
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" required ${isDisabled ? 'disabled' : ''}/>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}" required ${isDisabled ? 'disabled' : ''}/>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -315,7 +315,7 @@ export default class CreateForm extends AbstractStatefulView {
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
@@ -342,6 +342,7 @@ export default class CreateForm extends AbstractStatefulView {
       this.#datepicker = flatpickr(
         this.element.querySelector('#event-start-time-1'),
         {
+          maxDate: this._state.dateTo,
           dateFormat: 'j/m/y H:i',
           enableTime: true,
           defaultDate: this._state.dateFrom,
@@ -350,7 +351,6 @@ export default class CreateForm extends AbstractStatefulView {
       );
     }
   };
-
 
   #setToDatepicker = () => {
     if (this._state) {

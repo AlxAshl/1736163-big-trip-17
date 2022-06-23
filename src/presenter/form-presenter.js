@@ -11,8 +11,8 @@ import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
+  LOWER_LIMIT: 0,
+  UPPER_LIMIT: 500,
 };
 
 export default class FormPresenter {
@@ -31,7 +31,7 @@ export default class FormPresenter {
   #filterModel = null;
   #pointNewPresenter = null;
   #pointPresenter = new Map();
-  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
+  #uiBlocker =  new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
   constructor (formContainer, pointsModel, filterModel, offersModel, destinationsModel) {
@@ -72,7 +72,6 @@ export default class FormPresenter {
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
-
     this.#uiBlocker.block();
 
     switch (actionType) {
@@ -118,16 +117,13 @@ export default class FormPresenter {
 
     switch (updateType) {
       case UpdateType.  PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresenter.get(data.id).init(data, this.offers, this.destinations);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this.#clearForm();
         this.#renderForm();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this.#clearForm({resetSortType: true});
         this.#renderForm();
         break;

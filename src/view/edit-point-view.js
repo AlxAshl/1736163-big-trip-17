@@ -18,8 +18,18 @@ const createEditFormTemplate = (point, offersList, destinations) => {
     isDeleting
   } = point;
 
-  const startTime = humanizeDate(dateFrom);
-  const finishTime = humanizeDate(dateTo);
+  let startTime;
+  let finishTime;
+
+  if (dateFrom === null) {
+    startTime = '';
+    finishTime = '';
+  }
+  else {
+    startTime = humanizeDate(dateFrom);
+    finishTime = humanizeDate(dateTo);
+  }
+
   const pointDestinations = destinations;
   const pointTypeOffer = offersList
     .find((selectedOffer) => selectedOffer.type === point.type);
@@ -128,10 +138,10 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${finishTime}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -236,17 +246,15 @@ export default class EditForm extends AbstractStatefulView {
 
   #offerSelectHandler = (evt) => {
     evt.preventDefault();
-    const newState = this._state.offers;
-    if(newState.includes(Number(evt.target.id))) {
-      const index = newState.indexOf(evt.target.id);
-      newState.splice(index,1);
-    }
-    else {
-      newState.push(Number(evt.target.id));
-    }
-    newState.sort();
-    this._setState({
-      point: {offers: newState},
+    const theNewState = [];
+    const allCheckboxes = Array.from(document.querySelectorAll('.event__offer-checkbox'));
+    allCheckboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        theNewState.push(Number(checkbox.id));
+      }
+    });
+    this.updateElement({
+      offers: theNewState
     });
   };
 
@@ -308,7 +316,7 @@ export default class EditForm extends AbstractStatefulView {
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
@@ -321,11 +329,11 @@ export default class EditForm extends AbstractStatefulView {
   };
 
   #setFromDatepicker = () => {
-    if (this._state.dateFrom) {
+    if (this._state) {
       this.#datepicker = flatpickr(
         this.element.querySelector('#event-start-time-1'),
         {
-          minDate: this._state.dateTo,
+          maxDate: this._state.dateTo,
           dateFormat: 'j/m/y H:i',
           enableTime: true,
           defaultDate: this._state.dateFrom,
@@ -336,7 +344,7 @@ export default class EditForm extends AbstractStatefulView {
   };
 
   #setToDatepicker = () => {
-    if (this._state.dateTo) {
+    if (this._state) {
       this.#datepicker = flatpickr(
         this.element.querySelector('#event-end-time-1'),
         {
