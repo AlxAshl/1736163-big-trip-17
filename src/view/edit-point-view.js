@@ -50,8 +50,8 @@ const createEditFormTemplate = (point, offersList, destinations) => {
   };
 
   const createDestinations = () =>
-    pointDestinations.map((dest) => (
-      `<option value="${dest.name}"></option>`)
+    pointDestinations.map((destinationOption) => (
+      `<option value="${destinationOption.name}"></option>`)
     ).join('');
 
   return (

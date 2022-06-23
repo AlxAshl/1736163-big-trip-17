@@ -315,7 +315,7 @@ export default class CreateForm extends AbstractStatefulView {
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this._setState({
+    this.updateElement({
       dateTo: userDate,
     });
   };
