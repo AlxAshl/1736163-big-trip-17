@@ -1,13 +1,13 @@
 const FilterType = {
-  FUTURE: 'future',
-  EVERYTHING: 'everything',
-  PAST: 'past',
+  FUTURE: 'Future',
+  EVERYTHING: 'Everything',
+  PAST: 'Past',
 };
 
 const SortType = {
-  DAY: 'day',
-  TIME: 'time',
-  PRICE: 'price',
+  DAY: 'Day',
+  TIME: 'Time',
+  PRICE: 'Price',
 };
 
 const UserAction = {
@@ -22,4 +22,23 @@ const UpdateType = {
   MAJOR: 'MAJOR',
   INIT: 'INIT',
 };
-export {FilterType, SortType, UserAction, UpdateType};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const createPictures = (object) => {
+  if(object.name) {
+    return  object.pictures.map((picture) => (
+      `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`)
+    ).join('');
+
+  }
+
+  return '';
+};
+
+export {FilterType, SortType, UserAction, UpdateType, Method, createPictures};

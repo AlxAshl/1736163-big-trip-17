@@ -1,9 +1,5 @@
 import ApiService from '../framework/api-service.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import { Method } from '../const.js';
 
 export default class OfferApiService extends ApiService {
   get offers() {
@@ -11,7 +7,7 @@ export default class OfferApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  updatePoint = async (offer) => {
+  updateOffer = async (offer) => {
     const response = await this._load({
       url: `offers/${offer.id}`,
       method: Method.PUT,

@@ -17,26 +17,26 @@ const pointsModel = new PointModel(new PointApiService(END_POINT, AUTHORIZATION)
 const destinationsModel = new DestinationModel(new DestinationApiService(END_POINT, AUTHORIZATION));
 const offersModel = new OfferModel(new OfferApiService(END_POINT, AUTHORIZATION));
 const formPresenter = new FormPresenter(siteTripEventsSectionElement, pointsModel, filterModel, offersModel, destinationsModel);
-const newEventButton = document.querySelector('.trip-main__event-add-btn');
-newEventButton.disabled = true;
+const newEventButtonElement = document.querySelector('.trip-main__event-add-btn');
+newEventButtonElement.disabled = true;
 const mainInfoPresenter = new MainInfoPresenter(siteTripControlsElement, pointsModel, offersModel, destinationsModel);
 const filterPresenter = new FilterPresenter(siteTripControlsElement, filterModel, pointsModel);
 
 const handleNewPointFormClose = () => {
-  newEventButton.disabled = false;
+  newEventButtonElement.disabled = false;
 };
 
 const handleNewEventButtonClick = () => {
   formPresenter.createPoint(handleNewPointFormClose);
-  newEventButton.disabled = true;
+  newEventButtonElement.disabled = true;
 };
 
-newEventButton.addEventListener('click', handleNewEventButtonClick);
+newEventButtonElement.addEventListener('click', handleNewEventButtonClick);
 destinationsModel.init();
 offersModel.init()
   .finally(() => {
     pointsModel.init()
-      .then(newEventButton.disabled = false);
+      .then(newEventButtonElement.disabled = false);
   });
 formPresenter.init();
 mainInfoPresenter.init();

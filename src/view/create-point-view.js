@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import he from 'he';
+import { createPictures } from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -53,21 +54,8 @@ const createEditFormTemplate = (point, offersList, destinations) => {
                   </div>`;
       }).join('');
     }
-    else {
-      return '';
-    }
-  };
 
-  const createPictures = () => {
-    if(destination.name) {
-      return  destination.pictures.map((picture) => (
-        `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`)
-      ).join('');
-
-    }
-    else {
-      return '';
-    }
+    return '';
   };
 
   const createDestinations = () =>
@@ -148,7 +136,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
             </datalist>
           </div>
 
-          <div class="event__field-group  event__field-group--time" required>
+          <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
             <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" required ${isDisabled ? 'disabled' : ''} autocomplete="off"/>
             &mdash;
@@ -182,7 +170,7 @@ const createEditFormTemplate = (point, offersList, destinations) => {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${createPictures()}
+              ${createPictures(destination)}
 
             </div>
       </form>
@@ -190,16 +178,15 @@ const createEditFormTemplate = (point, offersList, destinations) => {
   );
 };
 
-export default class CreateForm extends AbstractStatefulView {
+export default class CreatePointView extends AbstractStatefulView {
 
   #datepicker = null;
-  #point = null;
   #offer = null;
   #destination = null;
 
   constructor(point = BLANK_POINT, offer, destinations) {
     super();
-    this._state = CreateForm.parsePointToState(point);
+    this._state = CreatePointView.parsePointToState(point);
     this.#offer = offer;
     this.#destination = destinations;
     this.#setInnerHandlers();
@@ -211,15 +198,29 @@ export default class CreateForm extends AbstractStatefulView {
     return createEditFormTemplate(this._state, this.#offer, this.#destination);
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
+
+  reset = (point) => {
+    this.updateElement(
+      CreatePointView.parsePointToState(point)
+    );
+  };
+
   setSubmitClickHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
-  reset = (point) => {
-    this.updateElement(
-      CreateForm.parsePointToState(point)
-    );
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   };
 
   _restoreHandlers = () => {
@@ -232,7 +233,7 @@ export default class CreateForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(CreateForm.parseStateToPoint(this._state, this.#offer, this.#destination));
+    this._callback.formSubmit(CreatePointView.parseStateToPoint(this._state, this.#offer, this.#destination));
   };
 
   #typeSelectHandler = (evt) => {
@@ -284,30 +285,6 @@ export default class CreateForm extends AbstractStatefulView {
       .addEventListener('change', this.#offerPriceHandler);
   };
 
-  static parsePointToState = (point) => ({...point,
-    isDisabled: false,
-    isSaving: false,
-    isDeleting: false,
-  });
-
-  static parseStateToPoint = (state) => {
-    const editForm = {...state};
-    delete editForm.newDestinationPoint;
-    delete editForm.isDisabled;
-    delete editForm.isSaving;
-    delete editForm.isDeleting;
-    return editForm;
-  };
-
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datepicker) {
-      this.#datepicker.destroy();
-      this.#datepicker = null;
-    }
-  };
-
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
@@ -315,19 +292,14 @@ export default class CreateForm extends AbstractStatefulView {
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
 
-  setDeleteClickHandler = (callback) => {
-    this._callback.deleteClick = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
-  };
-
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(CreateForm.parseStateToPoint(this._state));
+    this._callback.deleteClick(CreatePointView.parseStateToPoint(this._state));
   };
 
   #offerPriceHandler = (evt) => {
@@ -368,5 +340,20 @@ export default class CreateForm extends AbstractStatefulView {
         },
       );
     }
+  };
+
+  static parsePointToState = (point) => ({...point,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
+  });
+
+  static parseStateToPoint = (state) => {
+    const editForm = {...state};
+    delete editForm.newDestinationPoint;
+    delete editForm.isDisabled;
+    delete editForm.isSaving;
+    delete editForm.isDeleting;
+    return editForm;
   };
 }

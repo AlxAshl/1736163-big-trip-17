@@ -1,9 +1,5 @@
 import ApiService from '../framework/api-service.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import { Method } from '../const.js';
 
 export default class DestinationApiService extends ApiService {
   get destinations() {
@@ -11,7 +7,7 @@ export default class DestinationApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  updatePoint = async (destination) => {
+  updateDestination = async (destination) => {
     const response = await this._load({
       url: `destinations/${destination.id}`,
       method: Method.PUT,

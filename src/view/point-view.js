@@ -52,9 +52,8 @@ const createWaypoint = (point, offersList) => {
     if (days) {
       return (`${days}D`);
     }
-    else {
-      return ('');
-    }
+
+    return ('');
   };
 
   return (
@@ -94,7 +93,7 @@ const createWaypoint = (point, offersList) => {
   );
 };
 
-export default class Waypoint extends AbstractView {
+export default class PointView extends AbstractView {
 
   #point = null;
   #offer = null;

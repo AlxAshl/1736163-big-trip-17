@@ -14,6 +14,7 @@ const createMainInfoTemplate = (points, offers) => {
         }
       });
     });
+
     return sum;
   };
 
@@ -27,9 +28,8 @@ const createMainInfoTemplate = (points, offers) => {
     else if (points.length === 3){
       return (`${points[0].destination.name} &mdash; ${points[1].destination.name} &mdash; ${points[2].destination.name}`);
     }
-    else{
-      return (`${points[0].destination.name} &mdash; ${points[points.length -1].destination.name} `);
-    }
+
+    return (`${points[0].destination.name} &mdash; ${points[points.length -1].destination.name} `);
   };
 
   const createDateInfo = () => {
@@ -39,9 +39,8 @@ const createMainInfoTemplate = (points, offers) => {
     else if (points.length === 1){
       return (`${humanizeEventDate(points.dateFrom)}`);
     }
-    else{
-      return (`${humanizeEventDate(points[0].dateFrom)} &mdash; ${humanizeEventDate(points[points.length -1].dateTo)}`);
-    }
+
+    return (`${humanizeEventDate(points[0].dateFrom)} &mdash; ${humanizeEventDate(points[points.length -1].dateTo)}`);
   };
 
   const createBasePrice = () => {

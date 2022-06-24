@@ -1,6 +1,6 @@
 import {render, replace, remove} from '../framework/render.js';
-import Waypoint from '../view/point-view.js';
-import EditForm from '../view/edit-point-view.js';
+import PointView from '../view/point-view.js';
+import EditPointView from '../view/edit-point-view.js';
 import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
@@ -14,8 +14,6 @@ export default class PointPresenter {
   #pointContainer = null;
 
   #point = null;
-  #offer = null;
-  #destination = null;
 
   #changeMode = null;
   #changeData = null;
@@ -30,14 +28,12 @@ export default class PointPresenter {
   init = (point, offer, destinations) => {
 
     this.#point = point;
-    this.#offer = offer;
-    this.#destination = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditForm;
 
-    this.#pointComponent = new Waypoint(point, offer, destinations);
-    this.#pointEditForm = new EditForm(point, offer, destinations);
+    this.#pointComponent = new PointView(point, offer, destinations);
+    this.#pointEditForm = new EditPointView(point, offer, destinations);
 
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointComponent.setRollupClickHandler(this.#handlePointRollupClick);

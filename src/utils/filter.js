@@ -1,11 +1,11 @@
 import {FilterType} from '../const';
-import {humanizeDate} from '../utils/point.js';
 
 const currentDate = new Date();
 const filter = {
-  [FilterType.FUTURE]: (points) => points.filter((point) => humanizeDate(point.dateFrom) > humanizeDate(currentDate)),
-  [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
-  [FilterType.PAST]: (points) => points.filter((point) => humanizeDate(point.dateTo) < humanizeDate(currentDate)),
+  [FilterType.FUTURE]: (points) => points.filter((point) => point.dateFrom.getTime() >= currentDate.getTime() || (point.dateFrom.getTime() < currentDate.getTime() && currentDate.getTime() < point.dateTo.getTime())),
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.PAST]: (points) => points.filter((point) => point.dateTo.getTime() < currentDate.getTime() || (point.dateFrom.getTime() < currentDate.getTime() && currentDate.getTime() < point.dateTo.getTime())),
 };
 
 export {filter};
+

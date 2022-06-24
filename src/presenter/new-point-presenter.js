@@ -1,6 +1,6 @@
 import {UserAction, UpdateType} from '../const.js';
 import {remove, render, RenderPosition} from '../framework/render.js';
-import CreateForm from '../view/create-point-view.js';
+import CreatePointView from '../view/create-point-view.js';
 
 
 const Mode = {
@@ -27,7 +27,7 @@ export default class NewPointPresenter {
       return;
     }
 
-    this.#pointEditComponent = new CreateForm(undefined, offer, destinations);
+    this.#pointEditComponent = new CreatePointView(undefined, offer, destinations);
     this.#pointEditComponent.setSubmitClickHandler(this.#handleSubmitClick);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
